@@ -26,18 +26,8 @@ if ($Zeichen.count -eq 0)
     }
 # stelle Passwort zusammen
 $PWD = (1..$AnzahlZeichen | ForEach-Object { Get-Random -InputObject $Zeichen -Count 1 }) -join ''
-# berechne Entropie
-$Entropy = [math]::Log($Zeichen.count,2) * $AnzahlZeichen
-$Entropy = [math]::Round( $Entropy , 0 )
-# Schreibe Mail
-$MailSubject = "KrbTGT User Password Change triggered."
-$MailText = "Das Passwort des KrbTgt Users wurde auf -"  + $PWD + "- geaendert."
-$MailText += " Die Passwortqualitaet betraegt "+ $Entropy +" Bits." + "`r`n"  
-$MailText += "Mfg your Admin  - Skriptversion: " + $Version + "`r`n" + "`r`n"
-Send-Mailmessage -To "Admin <Admin@mydomain.com>" -from "Your Choice <anyone@mydomain.com>" -subject $MailSubject -body $MailText -priority High -smtpServer yoursmtpserver.yourdomain.com 
- 
-# Setze neues Passwort  
 
+# Setze neues Passwort  
 $UsrDNPath = "CN=krbtgt,CN=Users," + (Get-ADDomain).DistinguishedName
 
 Set-ADAccountPassword -Identity $UsrDNPath -Reset -NewPassword (ConvertTo-SecureString -String $PWD -AsPlainText -Force)
